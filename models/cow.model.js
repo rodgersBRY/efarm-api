@@ -16,11 +16,11 @@ const cowSchema = new Schema({
     required: true,
   },
   tagNo: {
-    type: String,
+    type: Number,
     required: true,
   },
   weight: {
-    type: String,
+    type: Number,
     required: true,
   },
   dob: {
@@ -36,6 +36,7 @@ const cowSchema = new Schema({
     {
       tagNo: Number,
       name: String,
+      _id: false,
     },
   ],
   motherTag: Number,
