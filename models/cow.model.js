@@ -31,6 +31,15 @@ const cowSchema = new Schema({
     type: String,
     required: true,
   },
+  offspring: [
+    //children
+    {
+      tagNo: Number,
+      name: String,
+    },
+  ],
+  motherTag: Number,
+  fatherTag: Number,
   notes: String,
 });
 

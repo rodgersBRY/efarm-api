@@ -3,4 +3,7 @@ const cowsController = require("../controllers/cow.controller");
 
 router.get("/", cowsController.getCows);
 
+router.post("/new-cow", cowsController.addCow);
+router.delete("/delete/:cowId", cowsController.deleteCow);
+
 module.exports = router;
