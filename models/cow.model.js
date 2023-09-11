@@ -39,6 +39,10 @@ const cowSchema = new Schema({
       _id: false,
     },
   ],
+  milked: {
+    type: Boolean,
+    default: false,
+  },
   motherTag: Number,
   fatherTag: Number,
   notes: String,

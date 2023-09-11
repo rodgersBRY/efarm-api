@@ -25,6 +25,7 @@ exports.addCow = async (req, res, next) => {
     motherTag,
     dob,
     modeOfAcquiring,
+    milked,
     notes,
   } = req.body;
 
@@ -50,6 +51,7 @@ exports.addCow = async (req, res, next) => {
       weight: weight,
       dob: dob,
       motherTag: motherTag,
+      milked: milked,
       fatherTag: fatherTag,
       modeOfAcquiring: modeOfAcquiring,
       notes: notes,
@@ -82,7 +84,7 @@ exports.deleteCow = async (req, res, next) => {
 exports.editCowDetails = async (req, res, next) => {
   const cowId = req.params.cowId;
 
-  const { breed, name, tagNo, weight, modeOfAcquiring, notes } =
+  const { breed, name, tagNo, milked, weight, modeOfAcquiring, notes } =
     req.body;
 
   try {
@@ -94,6 +96,7 @@ exports.editCowDetails = async (req, res, next) => {
     cow.name = name;
     cow.tagNo = tagNo;
     cow.weight = weight;
+    cow.milked = milked;
     cow.modeOfAcquiring = modeOfAcquiring;
     cow.notes = notes;
 
