@@ -30,11 +30,15 @@ exports.newRecord = async (req, res, next) => {
   }
 };
 
-exports.getAllrecords = async (_, res, next) => {
+exports.getCowRecords = async (req, res, next) => {
+  const cowTag = req.params.cowTag;
+
   try {
-    const records = await MilkRecord.find();
+    let records = await MilkRecord.find();
 
     if (!records) throwError("No records found", 404);
+
+    records = records.filter((record) => record.cowInfo.tagNo == cowTag);
 
     return res.status(200).json(records);
   } catch (err) {

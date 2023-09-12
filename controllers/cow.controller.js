@@ -13,6 +13,18 @@ exports.getCows = async (_, res, next) => {
   }
 };
 
+exports.getMilkedCows = async (_, res, next) => {
+  try {
+    const milkedCows = await Cow.find({ milked: true });
+
+    if (!milkedCows) throwError("No records found!", 404);
+
+    return res.status(200).json(milkedCows);
+  } catch (err) {
+    next(err);
+  }
+};
+
 // create a new cow in the db
 exports.addCow = async (req, res, next) => {
   const {
