@@ -27,6 +27,10 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.get("/", (req, res, next) => {
+  res.send({ message: "This is only the beginning chap!" });
+});
+
 // import the routes
 app.use("/api/v1/cows", cowRoutes);
 app.use("/api/v1/milking", milkingroutes);
