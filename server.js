@@ -3,8 +3,9 @@ const bodyParser = require("body-parser"),
   mongoose = require("mongoose"),
   cors = require("cors"),
   logger = require("morgan"),
+  userRoutes = require("./routes/user.routes"),
   cowRoutes = require("./routes/cow.routes"),
-  milkingroutes = require("./routes/milking.routes");
+  milkingRoutes = require("./routes/milking.routes");
 
 require("dotenv").config();
 
@@ -33,7 +34,8 @@ app.get("/", (req, res, next) => {
 
 // import the routes
 app.use("/api/v1/cows", cowRoutes);
-app.use("/api/v1/milking", milkingroutes);
+app.use("/api/v1/milking", milkingRoutes);
+app.use("/api/v1/auth", userRoutes);
 
 // error middleware
 app.use((err, req, res, next) => {
