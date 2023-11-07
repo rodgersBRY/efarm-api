@@ -82,10 +82,9 @@ exports.deleteCow = async (req, res, next) => {
   const cowTag = req.params.cowTag;
 
   try {
-    await Cow.deleteOne({ cowTag: cowTag });
+    await Cow.findOneAndRemove({ tagNo: cowTag });
 
-
-    res.status(204).json({message: `tag ${cowTag} deleted successfully`});
+    return res.status(204).json({ message: `tag ${cowTag} deleted successfully` });
   } catch (err) {
     next(err);
   }
