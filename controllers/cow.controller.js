@@ -77,16 +77,15 @@ exports.addCow = async (req, res, next) => {
   }
 };
 
-// delete a cow by the id
+// delete a cow by the tag no
 exports.deleteCow = async (req, res, next) => {
-  const cowId = req.params.cowId;
+  const cowTag = req.params.cowTag;
 
   try {
-    const cow = await Cow.findByIdAndDelete(cowId);
+    await Cow.deleteOne({ cowTag: cowTag });
 
-    if (!cow) throwError("Record Not Found!", 404);
 
-    res.status(204).json(cow);
+    res.status(204).json({message: `tag ${cowTag} deleted successfully`});
   } catch (err) {
     next(err);
   }
