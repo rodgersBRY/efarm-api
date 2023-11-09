@@ -1,4 +1,5 @@
 const Cow = require("../models/cow.model");
+const MilkRecord = require("../models/milking.model");
 
 // fetch all cows in the db
 exports.getCows = async (_, res, next) => {
@@ -79,7 +80,7 @@ exports.addCow = async (req, res, next) => {
 
 // delete a cow by the tag no
 exports.deleteCow = async (req, res, next) => {
-  const cowTag = req.params.cowTag;
+  const tagNo = req.params.tagNo;
 
   try {
     await Cow.findOneAndRemove({ tagNo: cowTag });
