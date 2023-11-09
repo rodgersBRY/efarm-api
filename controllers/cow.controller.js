@@ -1,4 +1,5 @@
 const Cow = require("../models/cow.model");
+const MilkRecord = require("../models/milking.model");
 
 // fetch all cows in the db
 exports.getCows = async (_, res, next) => {
@@ -79,13 +80,30 @@ exports.addCow = async (req, res, next) => {
 
 // delete a cow by the tag no
 exports.deleteCow = async (req, res, next) => {
-  const cowTag = req.params.cowTag;
+  const tagNo = req.params.tagNo;
 
   try {
-    await Cow.deleteOne({ cowTag: cowTag });
+    // const cow = await Cow.deleteOne({ tagNo: tagNo });
 
+    // if (!cow) throwError("Cow record cannot be found", 404);
 
-    res.status(204).json({message: `tag ${cowTag} deleted successfully`});
+    const records = await MilkRecord.find({ tagNo: tagNo });
+
+    if (!records) throwError(`Those records cannot be found`, 404);
+
+    console.log(records);
+
+    // MilkRecord.deleteMany({ tagNo: tagNo }, (err) => {
+    //   if (err) {
+    //     console.error(err);
+    //   } else {
+    //     console.log("successfully deleted the records");
+    //   }
+    // });
+
+    // if (!resp) throwError("error deleting milk records", 500);
+
+    res.status(204).json({ message: `tag ${cowTag} deleted successfully` });
   } catch (err) {
     next(err);
   }

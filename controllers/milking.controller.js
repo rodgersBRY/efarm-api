@@ -9,14 +9,10 @@ exports.newRecord = async (req, res, next) => {
 
     if (!cow) throwError("cow does not exist!", 404);
 
-    const cowInfo = {
-      name: cow.name,
-      tagNo: cow.tagNo,
-    };
-
     const milkRecord = new MilkRecord({
       dateTime: formatDate(),
-      cowInfo: cowInfo,
+      cowName: cow.name,
+      tagNo: cow.tagNo,
       yield: yield,
       yieldOnCalf: yieldOnCalf,
       observations: observations,
@@ -33,12 +29,12 @@ exports.newRecord = async (req, res, next) => {
 exports.getCowRecords = async (req, res, next) => {
   const cowTag = req.params.cowTag;
 
+  console.log(cowTag);
+
   try {
-    let records = await MilkRecord.find();
+    let records = await MilkRecord.find({tagNo: cowTag});
 
     if (!records) throwError("No records found", 404);
-
-    records = records.filter((record) => record.cowInfo.tagNo == cowTag);
 
     return res.status(200).json(records);
   } catch (err) {
