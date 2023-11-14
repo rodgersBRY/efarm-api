@@ -40,10 +40,10 @@ app.use("/api/v1/auth", userRoutes);
 // error middleware
 app.use((err, req, res, next) => {
   const message = err.message;
-  const status = err.status;
+  const status = err.status || 500;
   const data = err.data;
 
-  return res.status(status).json(message);
+  return res.status(status).json({ message, data });
 });
 
 // start the express server

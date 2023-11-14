@@ -47,7 +47,7 @@ exports.addCow = async (req, res, next) => {
 
     if (cowExists)
       throwError(
-        `That tag number is already awarded to cow ${cowExists.name}`,
+        `That tag number is already awarded to the cow ${cowExists.name}`,
         409
       );
 
@@ -70,9 +70,9 @@ exports.addCow = async (req, res, next) => {
       notes: notes,
     });
 
-    const result = await cow.save();
+    await cow.save();
 
-    return res.status(201).json(result);
+    return res.status(201).json({ msg: "Cow was added to database" });
   } catch (err) {
     next(err);
   }
@@ -83,9 +83,17 @@ exports.deleteCow = async (req, res, next) => {
   const tagNo = req.params.tagNo;
 
   try {
-    await Cow.findOneAndRemove({ tagNo: cowTag });
+    // delete the cow from the cow collection
+    const cow = await Cow.findOneAndRemove({ tagNo: tagNo });
 
-    return res.status(204).json({ message: `tag ${cowTag} deleted successfully` });
+    if (!cow) throwError("Cow does not exist", 404);
+
+    // delete all milk records for that cow
+    await MilkRecord.deleteMany({ tagNo: tagNo });
+
+    return res
+      .status(204)
+      .json({ message: `${cow.name} deleted successfully` });
   } catch (err) {
     next(err);
   }
@@ -137,8 +145,6 @@ const addMotherOffspring = async function (motherTag, tagNo, name) {
       motherCow.offspring = cowsOffspring;
 
       await motherCow.save();
-    } else {
-      next();
     }
   } catch (err) {
     next(err);
@@ -163,8 +169,6 @@ const addFatherOffspring = async function (fatherTag, tagNo, name) {
       fatherCow.offspring = cowsOffspring;
 
       await fatherCow.save();
-    } else {
-      next();
     }
   } catch (err) {
     next(err);
