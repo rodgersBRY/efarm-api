@@ -5,7 +5,8 @@ const bodyParser = require("body-parser"),
   logger = require("morgan"),
   userRoutes = require("./routes/user.routes"),
   cowRoutes = require("./routes/cow.routes"),
-  milkingRoutes = require("./routes/milking.routes");
+  milkingRoutes = require("./routes/milking.routes"),
+  employeeRoutes = require("./routes/employee.routes");
 
 require("dotenv").config();
 
@@ -20,7 +21,7 @@ mongoose
     console.log("Mongo docked and ready for boarding");
   })
   .catch((err) => {
-    console.error("Error connecting to the database.");
+    console.error("Error connecting to the database\n", err);
   });
 
 app.use(logger("dev"));
@@ -36,6 +37,7 @@ app.get("/", (req, res, next) => {
 app.use("/api/v1/cows", cowRoutes);
 app.use("/api/v1/milking", milkingRoutes);
 app.use("/api/v1/auth", userRoutes);
+app.use("/api/v1/employees", employeeRoutes);
 
 // error middleware
 app.use((err, req, res, next) => {
