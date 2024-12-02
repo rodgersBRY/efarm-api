@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const milkingController = require("../controllers/milking.controller");
+const milkingController = require("../api/controllers/milking.controller");
 
 router.get("/:cowTag", milkingController.getCowRecords);
 

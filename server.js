@@ -1,56 +1,37 @@
-const bodyParser = require("body-parser"),
-  express = require("express"),
-  mongoose = require("mongoose"),
-  cors = require("cors"),
-  logger = require("morgan"),
-  userRoutes = require("./routes/user.routes"),
-  cowRoutes = require("./routes/cow.routes"),
-  milkingRoutes = require("./routes/milking.routes"),
-  employeeRoutes = require("./routes/employee.routes");
-
 require("dotenv").config();
+require("reflect-metadata");
 
-const port = process.env.PORT || 4000;
+const express = require("express");
+const logger = require("./config/logger");
+const { PORT } = require("./loader/env");
+const { expressConfig } = require("./config/express");
+const { dbInit } = require("./config/db");
+const SystemService = require("./services/system");
+const { CowService } = require("./services/cow");
+const CowEventsHandler = require("./events/cow");
+const ErrorEventsHandler = require("./events/error");
 
 const app = express();
+const systemService = new SystemService();
 
-// connect to mongo db
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("Mongo docked and ready for boarding");
-  })
-  .catch((err) => {
-    console.error("Error connecting to the database\n", err);
-  });
+const cowService = new CowService();
 
-app.use(logger("dev"));
-app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+new CowEventsHandler(cowService);
 
 app.get("/", (req, res, next) => {
   res.send({ message: "This is only the beginning chap!" });
 });
 
-// import the routes
-app.use("/api/v1/cows", cowRoutes);
-app.use("/api/v1/milking", milkingRoutes);
-app.use("/api/v1/auth", userRoutes);
-app.use("/api/v1/employees", employeeRoutes);
+function serve() {
+  dbInit();
 
-// error middleware
-app.use((err, req, res, next) => {
-  const message = err.message;
-  const status = err.status || 500;
-  const data = err.data;
+  expressConfig(app);
 
-  return res.status(status).json({ message, data });
-});
+  systemService.init();
 
-// start the express server
-app.listen(port, () => {
-  console.log(`May the ${port} be with you`);
-});
+  app.listen(PORT, () => {
+    logger.info(`app-init: http://localhost:${PORT}`);
+  });
+}
 
-module.exports = app;
+serve();
