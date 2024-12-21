@@ -4,6 +4,4 @@
 
 *.env
 
-/uploads
-
-halisi_gkeys.json
+.DS_Store

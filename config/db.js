@@ -6,6 +6,7 @@ class MongoDB {
   async init() {
     try {
       const { connection } = await mongoose.connect(MONGO_URI);
+      
       const { host, port, name } = connection;
 
       logger.info(`db-init url: mongodb://${host}:${port}/${name}`);

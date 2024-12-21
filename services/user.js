@@ -42,7 +42,7 @@ class AuthService {
     try {
       const user = await getUser(query);
 
-      return user;
+      if (user) return user;
     } catch (err) {
       logger.error("get-user-error %o", err);
       throw err;

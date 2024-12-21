@@ -1,25 +1,28 @@
 const helmet = require("helmet");
 const logger = require("morgan");
 const cors = require("cors");
-const express = require("express");
+const { urlencoded, json } = require("express");
 const responseLogger = require("../utils/response");
+
+const userRoutes = require("../routes/user");
 
 class ExpressConfig {
   async init(app) {
     app
       .use(helmet())
       .use(logger("dev"))
-      .use(
-        cors({
-          origin: [""], //specify the origins to allow access to API
-        })
-      )
-      .use(express.urlencoded({ extended: true }))
-      .use(express.json())
+      .use(cors())
+      .use(urlencoded({ extended: true }))
+      .use(json())
       .use(responseLogger);
+
+    app.get("/", (req, res, next) => {
+      res.status(200).send({ message: "welcome" });
+    });
 
     const routes = [
       // add your route resources
+      { path: "/api/v1/users", handler: userRoutes },
     ];
 
     routes.forEach((route) => app.use(route.path, route.handler));

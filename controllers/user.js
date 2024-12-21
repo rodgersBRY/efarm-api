@@ -14,11 +14,14 @@ exports.getUsers = async (_, res, __) => {
 };
 
 exports.register = async (req, res, next) => {
-  const { name, email, password, phone, role } = req.body;
+  const { name, email, password, phone } = req.body;
 
   try {
-    if (!name || !email || !password || !phone)
-      throwError("all fields are required", 401);
+    if (!email || !password)
+      throwError("email and password fields are required", 400);
+
+    const userExists = await authService.findOne({ email });
+    if (userExists) throwError("account exists", 409);
 
     if (password.length < 7)
       throwError("Password should be more than 7 characters long", 400);
@@ -28,7 +31,6 @@ exports.register = async (req, res, next) => {
       email,
       password,
       phone,
-      role,
     });
 
     res.status(201).json({ user });
