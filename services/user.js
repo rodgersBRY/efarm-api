@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { throwError } = require("../helpers/error");
+const { throwError } = require("../utils/error");
 const { addUser, update, getUser, getUsers } = require("../models/user");
 const logger = require("../utils/logger");
 

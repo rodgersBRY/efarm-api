@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { throwError } = require("../helpers/error");
+const { throwError } = require("../utils/error");
 const { JWT_SECRET_TOKEN } = require("../config/env");
 
 const AuthService = require("../services/user");

@@ -5,6 +5,8 @@ const { urlencoded, json } = require("express");
 const responseLogger = require("../utils/response");
 
 const userRoutes = require("../routes/user");
+const cowRoutes = require("../routes/cows");
+const lactationRoutes = require("../routes/lactation");
 
 class ExpressConfig {
   async init(app) {
@@ -23,6 +25,8 @@ class ExpressConfig {
     const routes = [
       // add your route resources
       { path: "/api/v1/users", handler: userRoutes },
+      { path: "/api/v1/cows", handler: cowRoutes },
+      { path: "/api/v1/lactation", handler: lactationRoutes },
     ];
 
     routes.forEach((route) => app.use(route.path, route.handler));
