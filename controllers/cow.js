@@ -1,9 +1,11 @@
 const CowService = require("../services/cow");
+const LactationService = require("../services/lactaction");
 const _ = require("lodash");
 const { throwError } = require("../utils/error");
 const logger = require("../utils/logger");
 
 const cowService = new CowService();
+const lactationService = new LactationService();
 
 // fetch all cows in the db
 exports.getCows = async (req, res, next) => {
@@ -82,6 +84,10 @@ exports.deleteCow = async (req, res, next) => {
     const cow = await cowService.delete({ _id: cowId });
 
     // delete all milk records for that cow
+    const response = await lactationService.get({ tagNo: cow.tagNo });
+    for (const lactation of response.records) {
+      await lactationService.delete(lactation._id);
+    }
 
     return res.status(200).json({ cow });
   } catch (err) {

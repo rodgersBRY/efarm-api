@@ -54,6 +54,16 @@ class LactationService {
     }
   }
 
+  async findById(id) {
+    try {
+      const record = await LactationModel.findOne({ _id: id });
+
+      return record;
+    } catch (err) {
+      logger.error("error-fetching-record: %o", err);
+    }
+  }
+
   async update(query, updateData) {
     try {
       const record = await LactationModel.findOneAndUpdate(query, {
@@ -68,14 +78,12 @@ class LactationService {
     }
   }
 
-  async delete(query) {
+  async delete(id) {
     try {
-      const record = await LactationModel.findOneAndUpdate(query, {
-        deleted: true,
-        deletedAt: new Date(),
-      });
-
+      const record = await this.findById(id);
       if (!record) throwError("Record not found", 404);
+
+      record.softDelete();
 
       logger.info("record-deleted: %o", record._id);
 
@@ -85,15 +93,13 @@ class LactationService {
       throw new Error(err);
     }
   }
-
+  
   async restore(id) {
     try {
-      const record = await LactationModel.findByIdAndUpdate(id, {
-        deleted: false,
-        deletedAt: null,
-      });
-
+      const record = await this.findById(id);
       if (!record) throwError("Record not found", 404);
+
+      record.restore();
 
       logger.info("record-restored: %o", record._id);
 
