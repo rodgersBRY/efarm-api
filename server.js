@@ -1,35 +1,27 @@
 require("dotenv").config();
-require("reflect-metadata");
 
 const express = require("express");
 const logger = require("./config/logger");
 const { PORT } = require("./loader/env");
 const { expressConfig } = require("./config/express");
-const { dbInit } = require("./config/db");
+const MongoDB = require("./config/db");
 const SystemService = require("./services/system");
-const { CowService } = require("./services/cow");
-const CowEventsHandler = require("./events/cow");
-const ErrorEventsHandler = require("./events/error");
+const { createServer } = require("http");
 
 const app = express();
 const systemService = new SystemService();
+const mongoDB = new MongoDB();
 
-const cowService = new CowService();
+const server = createServer(app);
 
-new CowEventsHandler(cowService);
-
-app.get("/", (req, res, next) => {
-  res.send({ message: "This is only the beginning chap!" });
-});
-
-function serve() {
-  dbInit();
+async function serve() {
+  await mongoDB.init();
 
   expressConfig(app);
 
   systemService.init();
 
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     logger.info(`app-init: http://localhost:${PORT}`);
   });
 }

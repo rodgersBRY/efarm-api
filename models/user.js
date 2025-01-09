@@ -14,13 +14,31 @@ const userSchema = new Schema({
   role: {
     type: String,
     required: true,
-    default: "other",
-    enum: ["other", "admin"],
+    default: "employee",
+    enum: ["other", "employee", "admin"],
+  },
+  phone: {
+    type: String,
+    required: false,
+    unique: true,
   },
   password: {
     type: String,
     required: true,
-    select: false,
+  },
+  farmName: {
+    type: String,
+    required: false,
+    lowercase: true,
+  },
+  farmSize: {
+    type: Number,
+    required: false,
+  },
+  farmType: {
+    type: String,
+    required: false,
+    lowercase: true,
   },
 });
 

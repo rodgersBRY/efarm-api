@@ -17,8 +17,9 @@ class SystemService {
 
   async createAdminUser() {
     logger.info("admin-create");
+
     const adminUser = {
-      username: "Brian Mawira",
+      name: "Brian Mawira",
       email: ADMIN_EMAIL,
       password: ADMIN_PASS,
       role: "admin",
@@ -26,8 +27,12 @@ class SystemService {
 
     try {
       const admin = await userService.create(adminUser);
+
+      if (admin) {
+        logger.info("admin-created %o", admin._id);
+      }
     } catch (err) {
-      logger.info("admin-create-error: %o", admin);
+      logger.error("admin-create-error: %o", err.message);
     }
   }
 }

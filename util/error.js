@@ -1,5 +1,7 @@
 const throwError = function (errorText, errorCode) {
-  const error = new Error(errorText);
+  const error = new Error();
+  
+  error.message = errorText;
   error.status = errorCode;
   throw error;
 };

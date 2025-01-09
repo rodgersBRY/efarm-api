@@ -2,10 +2,8 @@ const CowModel = require("../models/cow");
 const _ = require("lodash");
 const logger = require("../config/logger");
 const { throwError } = require("../util/error");
-const EventEmitter = require("events");
-const { log } = require("console");
 
-class CowService extends EventEmitter {
+class CowService {
   async create(cowData) {
     try {
       if (_.isEmpty(cowData)) throwError("Cow data is required", 401);
@@ -14,9 +12,9 @@ class CowService extends EventEmitter {
         { tagNo: cowData.tagNo },
         { $set: _.omitBy(cowData, _.isNil) },
         { upsert: true, new: true }
-      );
+      ).exec();
 
-      logger.info("cow-created: %o", cow);
+      logger.info("cow-created: %o", cow._id);
 
       return cow;
     } catch (err) {
@@ -35,12 +33,21 @@ class CowService extends EventEmitter {
       const skip = (opts.page - 1) * opts.limit;
 
       const cows = await CowModel.find(query)
+        .populate("herd", "name -_id")
+        .populate("offspring", "tagNo name gender -_id")
         .sort(opts.sort)
         .skip(skip)
         .limit(opts.limit)
         .exec();
 
       const total = await CowModel.countDocuments(query);
+
+      logger.info(
+        "total cows: %o page: %o pages: %o",
+        total,
+        parseInt(opts.page),
+        Math.ceil(total / opts.limit)
+      );
 
       return {
         cows,
@@ -57,7 +64,11 @@ class CowService extends EventEmitter {
 
   async findById(id) {
     try {
-      const cow = await CowModel.findById(id).exec();
+      const cow = await CowModel.findById(id)
+        .populate("herd", "name -_id")
+        .populate("offspring", "tagNo name gender -_id")
+        .exec();
+
       if (!cow) {
         throw new Error("Cow not found");
       }
@@ -71,7 +82,10 @@ class CowService extends EventEmitter {
 
   async findOne(query) {
     try {
-      const cow = await CowModel.findOne(query).lean();
+      const cow = await CowModel.findOne(query)
+        .populate("herd", "name -_id")
+        .populate("offspring", "tagNo name gender -_id")
+        .lean();
       if (!cow) {
         throw new Error("Cow not found");
       }
@@ -106,7 +120,10 @@ class CowService extends EventEmitter {
 
   async delete(id) {
     try {
-      const cow = await CowModel.findByIdAndUpdate(id, { deleted: true });
+      const cow = await CowModel.findByIdAndUpdate(id, {
+        deleted: true,
+        deletedAt: new Date(),
+      }).exec();
       if (!cow) throw new Error("Cow not found");
 
       logger.info("cow-deleted: %o", cow);
@@ -119,7 +136,10 @@ class CowService extends EventEmitter {
 
   async restore(id) {
     try {
-      const cow = await CowModel.findByIdAndUpdate(id, { deleted: false });
+      const cow = await CowModel.findByIdAndUpdate(id, {
+        deleted: false,
+        deletedAt: null,
+      }).exec();
       if (!cow) throw new Error("Cow not found");
 
       logger.info("cow-restored: %o", cow);
@@ -134,7 +154,7 @@ class CowService extends EventEmitter {
   // add cow to list off mother offspring
   async addOffspring(parentTag, id) {
     try {
-      const parentCow = await CowModel.findOne({ tagNo: parentTag });
+      const parentCow = await CowModel.findOne({ tagNo: parentTag }).exec();
 
       if (parentCow) {
         // add the offspring to the parent
@@ -152,7 +172,7 @@ class CowService extends EventEmitter {
 
   async findWithDeleted(query = {}) {
     try {
-      return await CowModel.findWithDeleted(query);
+      return await CowModel.findWithDeleted(query).exec();
     } catch (error) {
       throw new Error(`Error fetching deleted cows: ${error.message}`);
     }

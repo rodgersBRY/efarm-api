@@ -1,13 +1,13 @@
 const bcrypt = require("bcrypt");
 
  class Bcrypt {
-  hashPassword(password) {
+  async hashPassword(password) {
     return bcrypt.hashSync(password, 12);
   }
 
-  comparePasswords(password, userPassword) {
-    return bcrypt.compare(password, userPassword);
+  async comparePasswords(password, userPassword) {
+    return bcrypt.compareSync(password, userPassword);
   }
 }
 
-module.exports = { Bcrypt };
+module.exports = Bcrypt;

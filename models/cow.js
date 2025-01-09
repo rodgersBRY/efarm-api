@@ -3,12 +3,19 @@ const mongooseDelete = require("mongoose-delete");
 
 const Schema = mongoose.Schema;
 
+// TODO:// ADD PADDOCK/HERD GROUP TO COW SCHEMA
 const cowSchema = new Schema(
   {
     breed: {
       type: String,
       required: true,
+      index: true,
       lowercase: true,
+    },
+    herd: {
+      type: Schema.Types.ObjectId,
+      ref: "Herd",
+      index: true,
     },
     name: {
       type: String,
@@ -20,10 +27,12 @@ const cowSchema = new Schema(
       required: true,
       enum: ["male", "female"],
       lowercase: true,
+      index: true,
     },
     tagNo: {
       type: String,
       required: true,
+      index: true,
       unique: true,
       lowercase: true,
     },
@@ -38,6 +47,7 @@ const cowSchema = new Schema(
     modeOfAcquiring: {
       type: String,
       required: true,
+      index: true,
       enum: ["purchase", "born"],
       lowercase: true,
     },
@@ -49,16 +59,32 @@ const cowSchema = new Schema(
     ],
     status: {
       type: String,
-      enum: ["active", "sold", "deceased"],
+      enum: ["active", "sold"],
+      index: true,
       default: "active",
       lowercase: true,
     },
+    healthStatus: {
+      type: String,
+      enum: ["healthy", "sick", "injured", "deceased"],
+      index: true,
+      default: "healthy",
+      lowercase: true,
+    },
+
     lactating: {
       type: Boolean,
       default: false,
+      index: true,
     },
-    motherTag: Number,
-    fatherTag: Number,
+    damEarTag: {
+      type: Number,
+      index: true,
+    },
+    sireEarTag: {
+      type: Number,
+      index: true,
+    },
     notes: String,
     pregnancyHistory: [
       {
@@ -73,13 +99,6 @@ const cowSchema = new Schema(
   },
   { timestamps: true }
 );
-
-cowSchema.index({ tagNo: 1 }, { unique: true });
-cowSchema.index({ name: 1 });
-cowSchema.index({ breed: 1 });
-cowSchema.index({ motherTag: 1 });
-cowSchema.index({ fatherTag: 1 });
-cowSchema.index({ lactating: 1 });
 
 // Calculate age
 cowSchema.virtual("age").get(function () {
@@ -98,14 +117,14 @@ cowSchema.pre("findOne", function () {
 
 // Add method to check if cow is eligible for milking
 cowSchema.methods.isLactationEligible = function () {
-  return this.gender === "Female" && this.age >= 2;
+  return this.gender === "female" && this.age >= 2;
 };
 
 // Add static method to find all lactating cows
 cowSchema.statics.findLactatingCattle = function () {
   return this.find({
-    gender: "Female",
-    status: "Active",
+    gender: "female",
+    status: "active",
     lactating: true,
   });
 };

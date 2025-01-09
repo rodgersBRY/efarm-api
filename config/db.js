@@ -3,13 +3,18 @@ const mongoose = require("mongoose");
 const { MONGO_URI } = require("../loader/env");
 const logger = require("./logger");
 
-const dbInit = () => {
-  mongoose
-    .connect(MONGO_URI)
-    .then(() => logger.info("db-init: %o", "mongodb://localhost:27017"))
-    .catch((err) => {
-      logger.error("db-init: %o", err);
-    });
-};
+class MongoDB {
+  async init() {
+    try {
+      const { connection } = await mongoose.connect(MONGO_URI);
+      const { host, port, name } = connection;
 
-module.exports = { dbInit };
+      logger.info(`db-init url: mongodb://${host}:${port}/${name}`);
+    } catch (err) {
+      logger.error("db-init error: %o", err);
+      process.exit(1);
+    }
+  }
+}
+
+module.exports = MongoDB;
