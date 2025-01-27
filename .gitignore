@@ -1,5 +1,13 @@
 /node_modules
 
+<<<<<<< HEAD
+*.http
+
+*.env
+
+.DS_Store
+=======
 *.env
 
 *.http
+>>>>>>> origin/main

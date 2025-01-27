@@ -1,32 +1,32 @@
+
 require("dotenv").config();
 
 const express = require("express");
-const logger = require("./config/logger");
-const { PORT } = require("./loader/env");
-const { expressConfig } = require("./config/express");
 const MongoDB = require("./config/db");
-const SystemService = require("./services/system");
+const { PORT } = require("./config/env");
 const { createServer } = require("http");
+const ExpressConfig = require("./config/express");
+const SystemService = require("./services/system");
+const logger = require("./utils/logger");
 
 const app = express();
-const systemService = new SystemService();
+
 const mongoDB = new MongoDB();
+
+const expressConfig = new ExpressConfig();
+const systemService = new SystemService();
 
 const server = createServer(app);
 
 async function serve() {
-  try {
-    await mongoDB.init();
-  } catch (err) {
-    logger.error("mongoose-init-error", err);
-  }
+  await mongoDB.init();
 
-  expressConfig(app);
+  expressConfig.init(app);
 
   systemService.init();
 
   server.listen(PORT, () => {
-    logger.info(`app-init: http://localhost:${PORT}`);
+    logger.info("server-init port: %o", parseInt(PORT));
   });
 }
 
