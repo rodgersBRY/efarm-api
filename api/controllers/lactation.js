@@ -16,8 +16,8 @@ exports.getRecords = async (req, res, next) => {
   let query = {},
     options = {};
 
-  if (req.query.tagNo) {
-    query.tagNo = req.query.tagNo;
+  if (req.query.tag) {
+    query.tag = req.query.tag;
   }
 
   if (req.query.page) options.page = req.query.page;

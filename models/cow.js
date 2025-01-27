@@ -16,11 +16,7 @@ const cowSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Herd",
       index: true,
-    },
-    name: {
-      type: String,
-      required: true,
-      lowercase: true,
+      required: false,
     },
     gender: {
       type: String,
@@ -29,7 +25,7 @@ const cowSchema = new Schema(
       lowercase: true,
       index: true,
     },
-    tagNo: {
+    tag: {
       type: String,
       required: true,
       index: true,
@@ -41,14 +37,14 @@ const cowSchema = new Schema(
       required: true,
     },
     dob: {
-      type: String,
+      type: Date,
       required: true,
     },
     modeOfAcquiring: {
       type: String,
       required: true,
       index: true,
-      enum: ["purchase", "born"],
+      enum: ["purchase", "breeding"],
       lowercase: true,
     },
     offspring: [
@@ -71,21 +67,23 @@ const cowSchema = new Schema(
       default: "healthy",
       lowercase: true,
     },
-
     lactating: {
       type: Boolean,
       default: false,
       index: true,
     },
     damEarTag: {
-      type: Number,
-      index: true,
+      type: String,
+      required: false,
     },
     sireEarTag: {
-      type: Number,
-      index: true,
+      type: String,
+      required: false,
     },
-    notes: String,
+    notes: {
+      type: String,
+      required: false,
+    },
     pregnancyHistory: [
       {
         startDate: Date,

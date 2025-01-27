@@ -15,7 +15,11 @@ const mongoDB = new MongoDB();
 const server = createServer(app);
 
 async function serve() {
-  await mongoDB.init();
+  try {
+    await mongoDB.init();
+  } catch (err) {
+    logger.error("mongoose-init-error", err);
+  }
 
   expressConfig(app);
 

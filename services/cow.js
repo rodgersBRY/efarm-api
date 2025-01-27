@@ -9,7 +9,7 @@ class CowService {
       if (_.isEmpty(cowData)) throwError("Cow data is required", 401);
 
       const cow = await CowModel.findOneAndUpdate(
-        { tagNo: cowData.tagNo },
+        { tag: cowData.tag },
         { $set: _.omitBy(cowData, _.isNil) },
         { upsert: true, new: true }
       ).exec();
@@ -26,7 +26,7 @@ class CowService {
     try {
       const opts = _.defaults(options, {
         page: 1,
-        limit: 10,
+        limit: 25,
         sort: "-createdAt",
       });
 
@@ -34,7 +34,7 @@ class CowService {
 
       const cows = await CowModel.find(query)
         .populate("herd", "name -_id")
-        .populate("offspring", "tagNo name gender -_id")
+        .populate("offspring", "tag name gender -_id")
         .sort(opts.sort)
         .skip(skip)
         .limit(opts.limit)
@@ -66,7 +66,7 @@ class CowService {
     try {
       const cow = await CowModel.findById(id)
         .populate("herd", "name -_id")
-        .populate("offspring", "tagNo name gender -_id")
+        .populate("offspring", "tag name gender -_id")
         .exec();
 
       if (!cow) {
@@ -84,7 +84,7 @@ class CowService {
     try {
       const cow = await CowModel.findOne(query)
         .populate("herd", "name -_id")
-        .populate("offspring", "tagNo name gender -_id")
+        .populate("offspring", "tag name gender -_id")
         .lean();
       if (!cow) {
         throw new Error("Cow not found");
@@ -154,7 +154,7 @@ class CowService {
   // add cow to list off mother offspring
   async addOffspring(parentTag, id) {
     try {
-      const parentCow = await CowModel.findOne({ tagNo: parentTag }).exec();
+      const parentCow = await CowModel.findOne({ tag: parentTag }).exec();
 
       if (parentCow) {
         // add the offspring to the parent

@@ -10,7 +10,6 @@ const herdSchema = new Schema(
       index: true,
       lowercase: true,
     },
-    cows: [{ type: Schema.Types.ObjectId, ref: "Cow" }],
   },
   { timestamps: true }
 );

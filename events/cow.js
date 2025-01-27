@@ -25,8 +25,8 @@ class CowEvents {
   handleOffspringAdded({ parent, offspring }) {
     logger.info("Offspring added: %o", {
       parentId: parent._id,
-      parentTag: parent.tagNo,
-      offspringTag: offspring.tagNo,
+      parentTag: parent.tag,
+      offspringTag: offspring.tag,
       timestamp: new Date(),
     });
   }

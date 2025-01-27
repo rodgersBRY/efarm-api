@@ -9,16 +9,15 @@ const cowService = new CowService();
 // fetch all cows in the db
 exports.getCows = async (req, res, next) => {
   let query = {};
+
   const options = {};
 
-  if (req.query.id) {
-    query = {
-      _id: req.query.id,
-    };
+  if (req.params.id) {
+    const cow = await cowService.findById(req.params.id);
+    return res.status(200).json(cow);
   }
 
   if (req.query.page) options.page = req.query.page;
-  if (req.query.limit) options.limit = req.query.limit;
 
   try {
     const cows = await cowService.get(query, options);
@@ -48,14 +47,15 @@ exports.addCow = async (req, res, next) => {
   try {
     const data = _.pick(req.body, [
       "breed",
-      "name",
-      "tagNo",
+      "tag",
       "gender",
+      "herd",
       "weight",
       "damEarTag",
       "sireEarTag",
       "modeOfAcquiring",
-      "milked",
+      "lactating",
+      "healthStatus",
       "notes",
     ]);
 
@@ -63,11 +63,6 @@ exports.addCow = async (req, res, next) => {
       ...data,
       dob: new Date().toISOString(),
     };
-
-    if (
-      _.some(["tagNo", "name", "breed"], (field) => _.isEmpty(cowData[field]))
-    )
-      throwError("Fill in the required fields", 401);
 
     const cow = await cowService.create(cowData);
 
