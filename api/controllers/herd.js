@@ -4,7 +4,7 @@ const { HerdService } = require("../../services/herd");
 
 const herdService = new HerdService();
 
-// fetch all cows in the db
+// fetch all herds in the db
 exports.getHerds = async (req, res, next) => {
   let query = {};
 
