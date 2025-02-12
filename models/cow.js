@@ -13,8 +13,7 @@ const cowSchema = new Schema(
       lowercase: true,
     },
     herd: {
-      type: Schema.Types.ObjectId,
-      ref: "Herd",
+      type: String,
       index: true,
       required: false,
     },
@@ -51,6 +50,7 @@ const cowSchema = new Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Cow",
+        required: false,
       },
     ],
     status: {
@@ -72,12 +72,14 @@ const cowSchema = new Schema(
       default: false,
       index: true,
     },
-    damEarTag: {
-      type: String,
+    dam: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cow",
       required: false,
     },
-    sireEarTag: {
-      type: String,
+    sire: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cow",
       required: false,
     },
     notes: {
@@ -95,13 +97,17 @@ const cowSchema = new Schema(
       },
     ],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+  }
 );
 
 // Calculate age
 cowSchema.virtual("age").get(function () {
   return Math.floor(
-    (new Date() - new Date(this.dob)) / (365.25 * 24 * 60 * 60 * 1000)
+    (new Date() - new Date(this.dob)) / (30.44 * 24 * 60 * 60 * 1000)
   );
 });
 

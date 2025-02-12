@@ -34,7 +34,9 @@ class CowService {
 
       const cows = await CowModel.find(query)
         .populate("herd", "name -_id")
-        .populate("offspring", "tag name gender -_id")
+        .populate("offspring", "tag -_id")
+        .populate("dam", "tag -_id")
+        .populate("sire", "tag -_id")
         .sort(opts.sort)
         .skip(skip)
         .limit(opts.limit)
@@ -66,7 +68,9 @@ class CowService {
     try {
       const cow = await CowModel.findById(id)
         .populate("herd", "name -_id")
-        .populate("offspring", "tag name gender -_id")
+        .populate("offspring", "tag -_id")
+        .populate("dam", "tag -_id")
+        .populate("sire", "tag -_id")
         .exec();
 
       if (!cow) {
@@ -84,7 +88,9 @@ class CowService {
     try {
       const cow = await CowModel.findOne(query)
         .populate("herd", "name -_id")
-        .populate("offspring", "tag name gender -_id")
+        .populate("offspring", "tag -_id")
+        .populate("dam", "tag -_id")
+        .populate("sire", "tag -_id")
         .lean();
       if (!cow) {
         throw new Error("Cow not found");

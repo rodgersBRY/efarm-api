@@ -1,8 +1,7 @@
 const { CowService } = require("../../services/cow");
-const MilkRecordModel = require("../../models/lactation");
+// const MilkRecordModel = require("../../models/lactation");
 const _ = require("lodash");
 const { throwError } = require("../../util/error");
-const logger = require("../../config/logger");
 
 const cowService = new CowService();
 
@@ -12,9 +11,9 @@ exports.getCows = async (req, res, next) => {
 
   const options = {};
 
-  if (req.params.id) {
-    const cow = await cowService.findById(req.params.id);
-    return res.status(200).json(cow);
+  if (req.query.id) {
+    const cow = await cowService.findById(req.query.id);
+    return res.status(200).json({ cow });
   }
 
   if (req.query.page) options.page = req.query.page;
@@ -45,23 +44,28 @@ exports.getLactactingCows = async (_, res, next) => {
 // create a new cow in the db
 exports.addCow = async (req, res, next) => {
   try {
+    if (!req.body.tag) {
+      throwError("Cow's tag is required", 401);
+    }
+
     const data = _.pick(req.body, [
       "breed",
       "tag",
       "gender",
       "herd",
       "weight",
-      "damEarTag",
-      "sireEarTag",
+      "dam",
+      "sire",
       "modeOfAcquiring",
       "lactating",
       "healthStatus",
+      "dob",
       "notes",
     ]);
 
     const cowData = {
       ...data,
-      dob: new Date().toISOString(),
+      dob: new Date(data.dob).toISOString(),
     };
 
     const cow = await cowService.create(cowData);
@@ -77,14 +81,11 @@ exports.deleteCow = async (req, res, next) => {
   const cowId = req.params.id;
 
   try {
-    // delete the cow from the cow collection
     const cow = await cowService.delete({ _id: cowId });
 
-    // delete all milk records for that cow
+    if (!cow) throwError("Cow not found", 404);
 
-    return res
-      .status(204)
-      .json({ message: `${cow.name} deleted successfully` });
+    return res.status(200);
   } catch (err) {
     next(err);
   }

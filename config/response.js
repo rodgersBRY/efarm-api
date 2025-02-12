@@ -11,13 +11,13 @@ const responseLogger = (req, res, next) => {
       logger.debug("request-query %o", req.query);
     }
 
-    logger.debug("request-body %o", req.body);
-
-    if (data.errors) {
-      logger.error("Error: %o", data.errors);
+    if (data.error) {
+      logger.error("Error: %o", data.error);
     }
 
-    logger.debug("%o", data);
+    logger.debug("request-body %o", req.body);
+
+    logger.debug("response-body %o", data);
 
     return originalJson.call(this, data);
   };
